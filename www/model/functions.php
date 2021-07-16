@@ -138,3 +138,11 @@ function is_valid_upload_image($image){
 function h($str){
   return htmlspecialchars($str,ENT_QUOTES,'UTF-8');
 }
+
+function sanitize($string) {
+  if (is_array($string)) {
+      return array_map("sanitize", $string);
+  } else {
+      return h($string, ENT_QUOTES);
+  }
+}
