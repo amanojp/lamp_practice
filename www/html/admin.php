@@ -6,7 +6,7 @@ require_once MODEL_PATH . 'item.php';
 
 session_start();
 
-if(is_logined() === false){
+if(is_logined() === false && check_token()=== false){
   redirect_to(LOGIN_URL);
 }
 

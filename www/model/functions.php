@@ -149,3 +149,24 @@ function sanitize($string) {
     return h($string, ENT_QUOTES);
   }
 }
+
+function get_csrf_token(){
+  $token = get_random_string(30);
+  set_session('csrf_token', $token);
+  return $token;
+}
+
+function is_valid_csrf_token($token){
+  if($token === '') {
+    return false;
+  }
+  return $token === get_session('csrf_token');
+}
+
+function check_token(){
+  $post_token = get_post('token');
+  if($post_token ==! $_SESSION['csrf_token']){
+    return false;
+  }
+  return $new_token = get_csrf_token();
+}
