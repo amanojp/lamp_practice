@@ -19,7 +19,7 @@ if(is_admin($user) === false){
 }
 
 $items = get_all_items($db);
-//$items = sanitize($items);
-//var_dump($items);
+$items = sanitize($items);
+
 
 include_once VIEW_PATH . '/admin_view.php';

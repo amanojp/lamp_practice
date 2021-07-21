@@ -143,6 +143,9 @@ function sanitize($string) {
   if (is_array($string)) {
       return array_map("sanitize", $string);
   } else {
-      return h($string, ENT_QUOTES);
+    if (is_numeric($string)) {
+      return $string;
+    }
+    return h($string, ENT_QUOTES);
   }
 }
