@@ -22,6 +22,7 @@ if( $user === false){
 }
 
 set_message('ログインしました。');
+get_csrf_token();
 if ($user['type'] === USER_TYPE_ADMIN){
   redirect_to(ADMIN_URL);
 }

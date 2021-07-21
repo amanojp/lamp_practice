@@ -10,11 +10,15 @@ if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
 
+if(check_token()=== false){
+  redirect_to(LOGIN_URL);
+}
+
 $db = get_db_connect();
 
 $user = get_login_user($db);
 
-if(is_admin($user) === false){
+if(is_admin($user) === false ){
   redirect_to(LOGIN_URL);
 }
 
