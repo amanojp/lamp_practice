@@ -12,18 +12,18 @@ if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
 
+if(check_token()=== false){
+  redirect_to(LOGIN_URL);
+}
+
 $db = get_db_connect();
 $user = get_login_user($db);
 
-$carts = get_user_carts($db, $user['user_id']);
+$order_number = get_post('order_number');
 
-$carts = sanitize($carts);
+$details = get_order_detail($db, $order_number);
+$details = sanitize($details);
 
-if(purchase_carts($db, $carts) === false){
-  set_error('商品が購入できませんでした。');
-  redirect_to(CART_URL);
-} 
+$total_price = sum_detail($details);
 
-$total_price = sum_carts($carts);
-
-include_once '../view/finish_view.php';
+include_once VIEW_PATH . 'order_detail_view.php';
