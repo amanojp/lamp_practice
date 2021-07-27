@@ -1,6 +1,7 @@
 <?php 
 require_once MODEL_PATH . 'functions.php';
 require_once MODEL_PATH . 'db.php';
+require_once MODEL_PATH . 'order.php';
 
 function get_user_carts($db, $user_id){
   $sql = "
@@ -102,20 +103,39 @@ function delete_cart($db, $cart_id){
 }
 
 function purchase_carts($db, $carts){
-  if(validate_cart_purchase($carts) === false){
-    return false;
-  }
-  foreach($carts as $cart){
-    if(update_item_stock(
-        $db, 
-        $cart['item_id'], 
-        $cart['stock'] - $cart['amount']
-      ) === false){
-      set_error($cart['name'] . 'の購入に失敗しました。');
+  $db->beginTransaction();
+  try{
+    if(validate_cart_purchase($carts) === false){
+      return false;
     }
+    foreach($carts as $cart){
+      if(update_item_stock(
+          $db, 
+          $cart['item_id'], 
+          $cart['stock'] - $cart['amount']
+        ) === false){
+        set_error($cart['name'] . 'の購入に失敗しました。');
+      }
+    }
+    
+    //for文で繰り返す回数をcountで取得
+    $count=count($carts);
+    //購入履歴、購入詳細Tableへ登録
+    insert_order_history($db, $carts[0]['user_id'], $datetime= date('Y-m-d H:i:s'));
+    //最後に登録したIDを取得
+    $order_number = $db->lastInsertId();
+    //for文で繰り返し登録
+    for($j=0; $j<$count; $j++) {
+      insert_order_detail($db, $order_number, $carts[$j]['item_id'], $carts[$j]['amount'], $carts[$j]['price']);
+    }
+    //カートから削除
+    delete_user_carts($db, $carts[0]['user_id']);
+
+    $db->commit();
+  } catch (PDOException $e) {
+    $db->rollback();
+    set_error('接続できませんでした。理由：'.$e->getMessage());
   }
-  
-  delete_user_carts($db, $carts[0]['user_id']);
 }
 
 function delete_user_carts($db, $user_id){
