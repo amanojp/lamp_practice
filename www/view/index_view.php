@@ -12,6 +12,10 @@
 
   <div class="container">
     <h1>商品一覧</h1>
+
+    <?php print($all_items);?>件中<?php print($start+1);?>件目から
+    <?php if($all_items<($start+8)){print($all_items);}else{print($start+8);}?>件目の商品
+
     <?php include VIEW_PATH . 'templates/messages.php'; ?>
 
     <div class="card-deck">
@@ -45,9 +49,12 @@
     <?php if($current_page >= 2){ ?>
     <a href="index.php?page=<?php print($current_page-1); ?>">←前ページ</a> | 
     <?php }; ?>
-    <?php
-    for($i=1; $i <= $all_pages; $i++) {?>
-      &nbsp;&nbsp;<a href="index.php?page=<?php print($i); ?>"><?php print($i); ?></a>
+    <?php for($i=1; $i <= $all_pages; $i++) { ?>
+      <?php if($i==$current_page){ ?>
+        &nbsp;&nbsp;<?php print($current_page); ?>
+      <?php }else{ ?>
+        &nbsp;&nbsp;<a href="index.php?page=<?php print($i); ?>"><?php print($i); ?></a>
+      <?php } ?>
     <?php } ?>
     <?php
     if($current_page < $all_pages){?>
