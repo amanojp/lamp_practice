@@ -42,6 +42,17 @@
       <?php } ?>
       </div>
     </div>
+    <?php if($current_page >= 2){ ?>
+    <a href="index.php?page=<?php print($current_page-1); ?>">←前ページ</a> | 
+    <?php }; ?>
+    <?php
+    for($i=1; $i <= $all_pages; $i++) {?>
+      &nbsp;&nbsp;<a href="index.php?page=<?php print($i); ?>"><?php print($i); ?></a>
+    <?php } ?>
+    <?php
+    if($current_page < $all_pages){?>
+     | <a href="index.php?page=<?php print($current_page+1); ?>">➔次ページ</a>
+    <?php }; ?>
   </div>
   
 </body>

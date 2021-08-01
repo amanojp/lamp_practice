@@ -22,7 +22,21 @@ function get_item($db, $item_id){
   return fetch_query($db, $sql, array($item_id));
 }
 
-function get_items($db, $is_open = false){
+function count_items($db){
+  $sql = '
+    SELECT 
+      COUNT(*) 
+    FROM 
+      items
+    WHERE
+      status = 1
+    ';
+  $all_items = fetch_query($db, $sql);
+  return $all_items = $all_items ["COUNT(*)"];
+}
+
+function get_items($db, $is_open=false, $start=''){
+  if($is_open === true){
   $sql = '
     SELECT
       item_id, 
@@ -33,22 +47,38 @@ function get_items($db, $is_open = false){
       status
     FROM
       items
+    WHERE
+      status = 1
+    ORDER BY
+      item_id
+    LIMIT
+      ?,8
   ';
-  if($is_open === true){
-    $sql .= '
-      WHERE status = 1
-    ';
-  }
-
+  return fetch_all_query($db, $sql, array($start));
+  }else{
+  $sql = '
+    SELECT
+      item_id, 
+      name,
+      stock,
+      price,
+      image,
+      status
+    FROM
+      items
+    ORDER BY
+      item_id
+  ';
   return fetch_all_query($db, $sql);
+  }
 }
 
 function get_all_items($db){
   return get_items($db);
 }
 
-function get_open_items($db){
-  return get_items($db, true);
+function get_open_items($db, $start){
+  return get_items($db, true, $start);
 }
 
 function regist_item($db, $name, $price, $stock, $status, $image){
@@ -145,6 +175,22 @@ function delete_item($db, $item_id){
 
 
 // 非DB
+function count_pages($db){
+  $all_items = count_items($db);
+  return ceil($all_items/8);
+}
+
+function get_current_page($page){
+  if(get_get($page)) {
+    return get_get($page);
+  }else{
+    return 1;
+  }
+}
+
+function check_start($page){
+  return 8*($page-1);
+}
 
 function is_open($item){
   return $item['status'] === 1;
